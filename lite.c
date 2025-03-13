@@ -15,11 +15,11 @@ int callback(void *data, int argc, char **argv, char **azColName) {
 int main()
 {
     printf("Hello world\n");
-    sqlite3 *db;
-    char *errMsg=0;
-    int rc;
+    sqlite3 *db;    //pointer to database
+    char *errMsg=0; //collects error msg
+    int rc;     //collects if function execution was succes(0) or not(!0)
 
-    rc = sqlite3_open("lite.db", &db);
+    rc = sqlite3_open("lite.db", &db);  //opens or creates database
     if (rc) {
         fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
         return 1;
@@ -28,9 +28,25 @@ int main()
     }
 
 
+          // Create table if it doesn't exist
+    const char *sql_create_table =  "CREATE TABLE IF NOT EXISTS event ("        //sql query
+                                    "id INTEGER PRIMARY KEY, "
+                                    "latitude REAL, "
+                                    "longitude REAL, "
+                                    "time TEXT);";
+    rc = sqlite3_exec(db, sql_create_table, 0, 0, &errMsg); //executes sql query
+    if (rc != SQLITE_OK) {
+    fprintf(stderr, "SQL error: %s\n", errMsg);
+    sqlite3_free(errMsg);
+    } else {
+    printf("Table created successfully.\n");
+    }
+
+        //insert data
+
     const char *sql_select = "SELECT * FROM event;";
     const char *data = "Event Data:";
-    rc = sqlite3_exec(db, sql_select, callback, (void *)data, &errMsg);
+    rc = sqlite3_exec(db, sql_select, callback, (void *)data, &errMsg); //executes sql query
     if (rc != SQLITE_OK) {
         fprintf(stderr, "SQL error: %s\n", errMsg);
         sqlite3_free(errMsg);
