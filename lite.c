@@ -42,7 +42,28 @@ int main()
     printf("Table created successfully.\n");
     }
 
+
+     
         //insert data
+
+    char sql_insert[500];
+    double longitude = 43.520726;
+    double latitude = 16.255967;
+    char *time="2011-03-02T15:06:03Z07:00";
+
+    snprintf(sql_insert,sizeof(sql_insert),"INSERT INTO event (longitude, latitude, time) VALUES (%.6f, %.6f, '%s');",longitude, latitude, time);
+
+   printf("%s",sql_insert);
+
+   rc = sqlite3_exec(db,sql_insert,0,0,&errMsg);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "SQL error: %s\n", errMsg);
+        sqlite3_free(errMsg);
+    } else {
+        printf("Data inserted successfully.\n");
+    }
+
+
 
     const char *sql_select = "SELECT * FROM event;";
     const char *data = "Event Data:";
