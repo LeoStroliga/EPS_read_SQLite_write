@@ -12,6 +12,51 @@ int callback(void *data, int argc, char **argv, char **azColName) {
 }
 
 
+//insert data function 
+int insert(sqlite3 *db,double longitude, double latitude, char *time){
+    char sql_insert[512];
+    char *errMsg = 0;
+    int rc;
+
+    snprintf(sql_insert,sizeof(sql_insert),"INSERT INTO event (longitude, latitude, time) VALUES (%.6f, %.6f, '%s');",longitude, latitude, time);
+
+   printf("%s",sql_insert);
+/*
+   rc = sqlite3_exec(db,sql_insert,0,0,&errMsg);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "SQL error: %s\n", errMsg);
+        sqlite3_free(errMsg);
+    } else {
+        printf("Data inserted successfully.\n");
+    }*/
+    return 0;
+}
+
+int delete(sqlite3 *db, int id){
+
+    char sql_delete[128];  
+    char *errMsg = 0;
+    int rc;
+
+    // Create SQL DELETE statement
+    snprintf(sql_delete, sizeof(sql_delete),
+             "DELETE FROM event WHERE id = %d;", id);
+             
+    printf("%s",sql_delete);
+
+    rc = sqlite3_exec(db, sql_delete, 0, 0, &errMsg);
+
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "SQL error: %s\n", errMsg);
+        sqlite3_free(errMsg);
+    }
+
+    return 0;
+             
+
+};
+
+
 int main()
 {
     printf("Hello world\n");
@@ -44,26 +89,14 @@ int main()
 
 
      
-        //insert data
 
     char sql_insert[500];
     double longitude = 43.520726;
     double latitude = 16.255967;
     char *time="2011-03-02T15:06:03Z07:00";
 
-    snprintf(sql_insert,sizeof(sql_insert),"INSERT INTO event (longitude, latitude, time) VALUES (%.6f, %.6f, '%s');",longitude, latitude, time);
-
-   printf("%s",sql_insert);
-
-   rc = sqlite3_exec(db,sql_insert,0,0,&errMsg);
-    if (rc != SQLITE_OK) {
-        fprintf(stderr, "SQL error: %s\n", errMsg);
-        sqlite3_free(errMsg);
-    } else {
-        printf("Data inserted successfully.\n");
-    }
-
-
+    //insert(db,longitude,latitude,time);
+    delete(db,4);
 
     const char *sql_select = "SELECT * FROM event;";
     const char *data = "Event Data:";
